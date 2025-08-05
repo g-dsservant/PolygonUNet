@@ -173,7 +173,8 @@ class UNet(nn.Module):
 			nn.ReLU(),
 			nn.Conv2d(16, 8, kernel_size=3, padding=1),
 			nn.ReLU(),
-			nn.Conv2d(8, out_channels, kernel_size=3, padding=1)
+			nn.Conv2d(8, out_channels, kernel_size=3, padding=1),
+			nn.Sigmoid()
 		)
 
 	def forward(self, x, encoded_color_maps):
