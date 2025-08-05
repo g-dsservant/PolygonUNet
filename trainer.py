@@ -35,14 +35,14 @@ train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, pin_memory=
 val_loader = DataLoader(val_dataset, batch_size=8, pin_memory=True, num_workers=4)
 
 def train(
-	epochs=100000,
+	epochs=5000,
 	lr=1e-3,
 	weight_decay=1e-5,
 	patience=300,
 	threshold=1e-5,
 	plot_freq=500,
 	save_freq=500,
-	img_log_freq=500
+	img_log_freq=100
 	):
 	epochs = epochs
 	polygon_net = PolyGonNet()
@@ -64,6 +64,7 @@ def train(
 	avg_val_loss = np.inf
 
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+	polygon_net = torch.compile(polygon_net)
 	polygon_net = polygon_net.to(device)
 
 	scaler = GradScaler('cuda')
@@ -112,9 +113,9 @@ def train(
 				if (epoch + 1) % img_log_freq == 0:
 					wandb.log({
 						"epoch": epoch+1,
-						"input img": wandb.Image(image[0].cpu().permute(1, 2, 0), caption="Input"),
-						"target_img": wandb.Image(target[0].cpu().permute(1, 2, 0), caption="Target"),
-						"predicted_img": wandb.Image(pred[0].cpu().permute(1, 2, 0), caption="Prediction")
+						"input img": wandb.Image(image[0].cpu().permute(1, 2, 0).numpy() * 255, caption="Input"),
+						"target_img": wandb.Image(target[0].cpu().permute(1, 2, 0).numpy() * 255, caption="Target"),
+						"predicted_img": wandb.Image(pred[0].cpu().permute(1, 2, 0).numpy() * 255, caption="Prediction")
 					})
 
 			avg_val_loss += (1 / (j + 1)) * (total_loss.item() - avg_val_loss)
@@ -155,5 +156,4 @@ def train(
 
 if __name__ == '__main__':
 	train()	
-
 
