@@ -112,9 +112,9 @@ def train(
 				if (epoch + 1) % img_log_freq == 0:
 					wandb.log({
 						"epoch": epoch+1,
-						"input img": wandb.Image(image.cpu().squeeze(0).permute(1, 2, 0), caption="Input"),
-						"target_img": wandb.Image(target.cpu().squeeze(0).permute(1, 2, 0), caption="Target"),
-						"predicted_img": wandb.Image(pred.cpu().squeeze(0).permute(1, 2, 0), caption="Prediction")
+						"input img": wandb.Image(image[0].cpu().permute(1, 2, 0), caption="Input"),
+						"target_img": wandb.Image(target[0].cpu().permute(1, 2, 0), caption="Target"),
+						"predicted_img": wandb.Image(pred[0].cpu().permute(1, 2, 0), caption="Prediction")
 					})
 
 			avg_val_loss += (1 / (j + 1)) * (total_loss.item() - avg_val_loss)
@@ -155,4 +155,5 @@ def train(
 
 if __name__ == '__main__':
 	train()	
+
 
